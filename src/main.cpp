@@ -4,6 +4,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QCoreApplication::setOrganizationName("fape");
+    QCoreApplication::setOrganizationDomain("fape.hu");
+    QCoreApplication::setApplicationName("ChorusQtGui");
     MainWindow w;
     w.show();
 

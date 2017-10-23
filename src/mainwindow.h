@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QKeyEvent>
 #include <QTextToSpeech>
+#include <QSettings>
 
 #include <QtSerialPort/QSerialPort>
 
@@ -24,6 +25,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    static const QString SETTINGS_KEY_SERIAL;
+    static const QString SETTINGS_KEY_VOICE;
+    static const QString SETTINGS_KEY_LAPTIME;
+    static const QString SETTINGS_KEY_BEST_LAPTIME;
+    static const QString SETTINGS_KEY_RATE;
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
 private slots:
     void openSerialPort();
     void closeSerialPort();
@@ -40,7 +51,6 @@ private slots:
 private:
     void fillSerialPortsComboBox();
     void fillSpeechForm();
-    void keyPressEvent(QKeyEvent *event);
     void parseDeviceProperty(QString cmd, ChorusDevice* device);
     int parseHex(QString str);
 
@@ -52,6 +62,7 @@ private:
     int numberOfDevices;
     ChorusLaptimer laptimer;
     QTextToSpeech speech;
+    QSettings settings;
 
 };
 

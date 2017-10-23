@@ -9,11 +9,18 @@
 #include "chorusdeviceform.h"
 #include "speechinfoholder.h"
 
+const QString MainWindow::SETTINGS_KEY_SERIAL = QString("serial");
+const QString MainWindow::SETTINGS_KEY_VOICE = QString("voice");
+const QString MainWindow::SETTINGS_KEY_BEST_LAPTIME = QString("bestLaptime");
+const QString MainWindow::SETTINGS_KEY_LAPTIME = QString("laptime");
+const QString MainWindow::SETTINGS_KEY_RATE = QString("rate");
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     laptimer(this),
-    speech(this)
+    speech(this),
+    settings(this)
 {
     ui->setupUi(this);
     serial = new QSerialPort(this);
@@ -47,6 +54,9 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << laptimer;*/
 
     fillSpeechForm();
+
+    //set volume to max
+    speech.setVolume(1.0);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
@@ -70,7 +80,7 @@ void MainWindow::openSerialPort(){
         ui->mainStackedWidget->setCurrentWidget(ui->mainPage);
         ui->chorusLogoLabel->hide();
         ui->serialLogListWidget->clear();
-        writeData("N3"); //enumerate all devices, resposen will be device count
+        writeData("N0"); //enumerate all devices, resposen will be device count
     } else {
         QMessageBox::critical(this, tr("Error"), serial->errorString());
         statusLabel->setText(tr("Connection error"));
@@ -294,22 +304,33 @@ void MainWindow::writeData(const QString &data){
 }
 
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event){
+    settings.setValue(SETTINGS_KEY_SERIAL, ui->serialPortsComboBox->currentText());
+    settings.setValue(SETTINGS_KEY_VOICE,ui->voicesComboBox->currentText());
+    settings.setValue(SETTINGS_KEY_LAPTIME,ui->newLaptimeLineEdit->text());
+    settings.setValue(SETTINGS_KEY_BEST_LAPTIME,ui->newBestLaptimeLineEdit->text());
+    settings.setValue(SETTINGS_KEY_RATE,ui->rateSlider->value());
+    closeSerialPort();
+    event->accept();
 }
 
 void MainWindow::fillSerialPortsComboBox(){
     ui->serialPortsComboBox->clear();
     const auto infos = QSerialPortInfo::availablePorts();
+    QString last;
     if(infos.empty()){
         ui->serialPortStacketWidget->setCurrentWidget(ui->noSerialPage);
     } else {
         ui->serialPortStacketWidget->setCurrentWidget(ui->serialPage);
         for (const QSerialPortInfo &info : infos) {
-            ui->serialPortsComboBox->addItem(info.portName());
+            last = info.portName();
+            ui->serialPortsComboBox->addItem(last);
         }
-        ui->serialPortsComboBox->setCurrentIndex(infos.length() - 1);
+        ui->serialPortsComboBox->setCurrentText(settings.value(SETTINGS_KEY_SERIAL, last).toString());
     }
 }
 
@@ -320,18 +341,13 @@ void MainWindow::rateChanged(int rate){
 
 void MainWindow::fillSpeechForm(){
     qDebug() << "fillSpeechForm";
-
-    rateChanged(ui->rateSlider->value());
-    connect(ui->rateSlider, &QSlider::valueChanged, this, &MainWindow::rateChanged);
-
     ui->voicesComboBox->clear();
-
+    QString label;
     foreach(const QLocale& locale, speech.availableLocales()){
         speech.setLocale(locale);
         foreach(const QVoice& voice, speech.availableVoices()){
-            QString label = QString("%1 - %2 - %3 - %4 - %5")
+            label = QString("%1 - %2 - %3 - %4")
                     .arg(QLocale::languageToString(locale.language()))
-                    .arg(QLocale::countryToString(locale.country()))
                     .arg(voice.name())
                     .arg(QVoice::genderName(voice.gender()))
                     .arg(QVoice::ageName(voice.age()));
@@ -339,11 +355,15 @@ void MainWindow::fillSpeechForm(){
             ui->voicesComboBox->addItem(label, QVariant::fromValue(SpeechInfoHolder(locale, voice)));
         }
     }
-    connect(ui->voicesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::voicesComboBoxIndexChanged);
-    ui->voicesComboBox->setCurrentIndex(ui->voicesComboBox->count() - 1);
-
+    connect(ui->rateSlider, &QSlider::valueChanged, this, &MainWindow::rateChanged);
     connect(&speech, &QTextToSpeech::stateChanged, this, &MainWindow::speechStateChanged);
     connect(ui->testVoiceButton, &QPushButton::clicked, this, &MainWindow::testVoiceButtonClicked);
+    connect(ui->voicesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::voicesComboBoxIndexChanged);
+
+    ui->voicesComboBox->setCurrentText(settings.value(SETTINGS_KEY_VOICE, label).toString());
+    ui->newBestLaptimeLineEdit->setText(settings.value(SETTINGS_KEY_BEST_LAPTIME, ui->newBestLaptimeLineEdit->text()).toString());
+    ui->newLaptimeLineEdit->setText(settings.value(SETTINGS_KEY_LAPTIME, ui->newLaptimeLineEdit->text()).toString());
+    ui->rateSlider->setValue(settings.value(SETTINGS_KEY_RATE, 0).toInt());
 }
 
 void MainWindow::voicesComboBoxIndexChanged(int index){
@@ -361,3 +381,5 @@ void MainWindow::testVoiceButtonClicked(){
 void MainWindow::speechStateChanged(QTextToSpeech::State state){
     qDebug() << "speechStateChanged" << state;
 }
+
+
