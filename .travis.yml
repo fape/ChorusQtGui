@@ -1,0 +1,20 @@
+language: cpp
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:beineri/opt-qt592-trusty'
+    packages:
+      - qt59base
+      - qt59speech
+      - qt59serialport
+
+before_script:
+  - QTDIR="/opt/qt59"
+  - PATH="$QTDIR/bin:$PATH"
+  - source /opt/qt59/bin/qt59-env.sh
+
+script:
+  - qmake ChorusQtGui.pro
+  - make
