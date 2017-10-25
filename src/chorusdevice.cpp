@@ -1,8 +1,8 @@
 #include "chorusdevice.h"
 
 ChorusDevice::ChorusDevice(QString id, QObject *parent) : QObject(parent),
-    m_id(id), m_race(), m_minLaptime(), m_band(), m_channel(), m_frequency(), m_threshold(), m_sound(), m_monitor(),
-    m_firstLap(), m_rssi(), m_laptimes(), m_configured(), m_api()
+    m_id(id), m_calibrated(),  m_race(), m_minLaptime(), m_band(), m_channel(), m_frequency(), m_threshold(), m_sound(), m_monitor(),
+    m_firstLap(), m_rssi(), m_monitorDelay(), m_laptimes(), m_configured(), m_api()
 {        
 }
 
@@ -28,10 +28,11 @@ QDebug operator<<(QDebug debug, const ChorusDevice &device){
 
 QDebug operator<<(QDebug debug, const ChorusDevice *device){
     QDebugStateSaver saver(debug);
-    debug.nospace() << "id: " << device->id() << ", race: " << device->race() << ", minLaptime: " << device->minLaptime()
-                    << ", band: " << device->band() << ", channel: " << device->channel() << ", frequency: " << device->frequency()
-                    << ", threshold: " << device->threshold() << ", sound: "<<device->sound() << ", monitor: "<< device->monitor()
-                    << ", firstLap: " << device->firstLap() << ", rssi: "<< device->rssi() << ", laptimes: "<< device->laptimes()
+    debug.nospace() << "id: " << device->id()<< ", calibrated: " << device->calibrated() << ", race: " << device->race()
+                    << ", minLaptime: " << device->minLaptime() << ", band: " << device->band() << ", channel: " << device->channel()
+                    << ", frequency: " << device->frequency() << ", threshold: " << device->threshold() << ", sound: "<<device->sound()
+                    << ", monitor: "<< device->monitor() << ", firstLap: " << device->firstLap() << ", rssi: "<< device->rssi()
+                    << ", monitorDelay: "<< device->monitorDelay() << ", laptimes: "<< device->laptimes()
                     << ", configured: "<< device->configured() << ", api: "<<device->api();
 
     return debug;
@@ -40,6 +41,17 @@ QDebug operator<<(QDebug debug, const ChorusDevice *device){
 QString ChorusDevice::id() const
 {
     return m_id;
+}
+
+bool ChorusDevice::calibrated() const{
+    return m_calibrated;
+}
+
+void ChorusDevice::setCalibrated(const bool calibrated){
+    if(calibrated != m_calibrated){
+        m_calibrated = calibrated;
+        emit calibratedChanged(calibrated);
+    }
 }
 
 bool ChorusDevice::race() const{
@@ -149,6 +161,17 @@ void ChorusDevice::setRssi(const int rssi){
     if(rssi != m_rssi){
         m_rssi = rssi;
         emit rssiChanged(rssi);
+    }
+}
+
+int ChorusDevice::monitorDelay() const{
+    return m_monitorDelay;
+}
+
+void ChorusDevice::setMonitorDelay(const int monitorDelay){
+    if(monitorDelay != m_monitorDelay){
+        m_monitorDelay = monitorDelay;
+        emit monitorDelayChanged(monitorDelay);
     }
 }
 

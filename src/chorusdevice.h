@@ -10,6 +10,7 @@ class ChorusDevice : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString id READ id) //  N
+    Q_PROPERTY(bool calibrated READ calibrated WRITE setCalibrated NOTIFY calibratedChanged) // i
     Q_PROPERTY(bool race READ race WRITE setRace NOTIFY raceChanged) // R
     Q_PROPERTY(int minLaptime READ minLaptime WRITE setMinLaptime NOTIFY minLaptimeChanged) // M
     Q_PROPERTY(int band READ band WRITE setBand NOTIFY bandChanged) // B
@@ -20,6 +21,7 @@ class ChorusDevice : public QObject
     Q_PROPERTY(bool monitor READ monitor WRITE setMonitor NOTIFY monitorChanged) // V
     Q_PROPERTY(bool firstLap READ firstLap WRITE setFirstLap NOTIFY firstLapChanged) // F
     Q_PROPERTY(int rssi READ rssi WRITE setRssi NOTIFY rssiChanged) // S
+    Q_PROPERTY(int monitorDelay READ monitorDelay WRITE setMonitorDelay NOTIFY monitorDelayChanged) // d
     Q_PROPERTY(QMap<int, int> laptimes READ laptimes NOTIFY laptimesChanged) // L
     Q_PROPERTY(bool configured READ configured WRITE setConfigured NOTIFY configuredChanged) // P
     Q_PROPERTY(int api READ api WRITE setApi NOTIFY apiChanged) // #
@@ -33,6 +35,8 @@ public:
 
     // PROPERTIES
     QString id() const;
+    bool calibrated() const;
+    void setCalibrated(const bool calibrated);
     bool race() const;
     void setRace(const bool race);
     int minLaptime() const;
@@ -53,6 +57,8 @@ public:
     void setFirstLap(const bool firstLap);
     int rssi() const;
     void setRssi(const int rssi);
+    int monitorDelay() const;
+    void setMonitorDelay(const int monitorDelay);
     QMap<int, int> laptimes() const;
     bool configured() const;
     void setConfigured(const bool configured);
@@ -62,24 +68,27 @@ public:
 signals:
 
     // PROPERTIES
+    void calibratedChanged(bool calibrated);
     void raceChanged(bool race);
-    void minLaptimeChanged(bool race);
-    void bandChanged(int id);
-    void channelChanged(int id);
-    void frequencyChanged(int id);
-    void thresholdChanged(int id);
-    void soundChanged(bool race);
-    void monitorChanged(bool race);
-    void firstLapChanged(bool race);
-    void rssiChanged(int id);
+    void minLaptimeChanged(bool minLaptime);
+    void bandChanged(int band);
+    void channelChanged(int channel);
+    void frequencyChanged(int frequency);
+    void thresholdChanged(int threshold);
+    void soundChanged(bool sound);
+    void monitorChanged(bool monitor);
+    void firstLapChanged(bool firstLap);
+    void rssiChanged(int rssi);
+    void monitorDelayChanged(int monitorDelay);
     void laptimesChanged();
-    void configuredChanged(bool race);
-    void apiChanged(int id);
+    void configuredChanged(bool configured);
+    void apiChanged(int api);
 
 public slots:
 
 private:
     QString m_id;
+    bool m_calibrated;
     bool m_race;
     int m_minLaptime;
     int m_band;
@@ -90,6 +99,7 @@ private:
     bool m_monitor;
     bool m_firstLap;
     int m_rssi;
+    int m_monitorDelay;
     QMap<int, int> m_laptimes;
     bool m_configured;
     int m_api;

@@ -89,6 +89,7 @@ void MainWindow::openSerialPort(){
 
 void MainWindow::closeSerialPort(){
     if (serial->isOpen()){
+        writeData("R*v");
         serial->close();
     }
     statusLabel->setText(tr("Disconnected"));
@@ -149,7 +150,18 @@ void MainWindow::readData(){
 
 void MainWindow::parseDeviceProperty(QString cmd, ChorusDevice* device){
     qDebug() << "parseDeviceProperty" << cmd;
-    switch (cmd.at(0).toUpper().toLatin1()) {
+    switch (cmd.at(0).toLatin1()) {
+    case 'i':
+    {
+        bool ok;
+        int tmp = cmd.mid(1).toInt(&ok, 16);
+        if(ok){
+            device->setCalibrated(tmp);
+        } else {
+            qCritical() << "invalid Calibrated";
+        }
+        break;
+    }
     case 'R':
     {
         bool ok;
@@ -238,6 +250,18 @@ void MainWindow::parseDeviceProperty(QString cmd, ChorusDevice* device){
         }
         break;
     }
+    case 'F':
+    {
+        bool ok;
+        int tmp = cmd.mid(1).toInt(&ok, 16);
+        qDebug() <<"first lap" << tmp;
+        if(ok){
+            device->setFirstLap(tmp);
+        } else {
+            qCritical() << "invalid first lap";
+        }
+        break;
+    }
     case 'S':
     {
         bool ok;
@@ -247,6 +271,18 @@ void MainWindow::parseDeviceProperty(QString cmd, ChorusDevice* device){
             device->setRssi(tmp);
         } else {
             qCritical() << "invalid rssi";
+        }
+        break;
+    }
+    case 'd':
+    {
+        bool ok;
+        int tmp = cmd.mid(1).toInt(&ok, 16);
+        qDebug() <<"monitorDelay" << tmp;
+        if(ok){
+            device->setMonitorDelay(tmp);
+        } else {
+            qCritical() << "invalid monitorDelay";
         }
         break;
     }
