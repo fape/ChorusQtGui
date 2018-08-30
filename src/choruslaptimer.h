@@ -7,10 +7,12 @@
 #include <QDebug>
 #include "chorusdevice.h"
 
+typedef QMap<QString, ChorusDevice*> StringChorusDevicePtrMap;
+
 class ChorusLaptimer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QMap<QString, ChorusDevice*> devicesMap READ devicesMap NOTIFY devicesMapChanged)
+    Q_PROPERTY(StringChorusDevicePtrMap devicesMap READ devicesMap NOTIFY devicesMapChanged)
 
 public:
     explicit ChorusLaptimer(QObject *parent = nullptr);

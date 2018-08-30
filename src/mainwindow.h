@@ -22,8 +22,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
 
     static const QString SETTINGS_KEY_SERIAL;
     static const QString SETTINGS_KEY_VOICE;

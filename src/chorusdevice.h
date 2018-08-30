@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QDebug>
 
+typedef QMap<int, int> IntIntMap;
+
 class ChorusDevice : public QObject
 {
     Q_OBJECT
@@ -22,7 +24,7 @@ class ChorusDevice : public QObject
     Q_PROPERTY(bool firstLap READ firstLap WRITE setFirstLap NOTIFY firstLapChanged) // F
     Q_PROPERTY(int rssi READ rssi WRITE setRssi NOTIFY rssiChanged) // S
     Q_PROPERTY(int monitorDelay READ monitorDelay WRITE setMonitorDelay NOTIFY monitorDelayChanged) // d
-    Q_PROPERTY(QMap<int, int> laptimes READ laptimes NOTIFY laptimesChanged) // L
+    Q_PROPERTY(IntIntMap laptimes READ laptimes NOTIFY laptimesChanged) // L
     Q_PROPERTY(bool configured READ configured WRITE setConfigured NOTIFY configuredChanged) // P
     Q_PROPERTY(int api READ api WRITE setApi NOTIFY apiChanged) // #
 

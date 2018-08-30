@@ -12,7 +12,7 @@ class ChorusDeviceForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChorusDeviceForm(QWidget *parent = 0);
+    explicit ChorusDeviceForm(QWidget *parent = nullptr);
     ~ChorusDeviceForm();
 
 private slots:
