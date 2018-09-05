@@ -47,6 +47,7 @@ private slots:
     void voicesComboBoxIndexChanged(int index);
     void testVoiceButtonClicked();
     void speechStateChanged(QTextToSpeech::State state);
+    void deviceApiChanged(int api);
 
 private:
     void fillSerialPortsComboBox();

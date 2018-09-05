@@ -18,7 +18,7 @@
     <item>
      <widget class="QStackedWidget" name="mainStackedWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="connectPage">
        <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -126,6 +126,12 @@
                </item>
                <item row="0" column="1">
                 <widget class="QComboBox" name="serialPortsComboBox">
+                 <property name="minimumSize">
+                  <size>
+                   <width>60</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <item>
                   <property name="text">
                    <string>COM123</string>

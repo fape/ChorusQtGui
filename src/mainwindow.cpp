@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //set volume to max
     speech.setVolume(1.0);
+    update();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event){
@@ -124,13 +125,11 @@ void MainWindow::readData(){
                 QString msg;
                 if(numberOfDevices == 0){
                     msg = tr("No device found");
-                } else if(numberOfDevices == 1){
-                    msg = tr("1 device found");
-                } else{
-                    msg = tr("%1 devices found").arg(numberOfDevices);
+                } else {
+                    msg = tr("%1 device(s) found").arg(numberOfDevices);
                 }
                 deviceNumberLabel->setText(msg);
-                writeData("R*A"); // get all bulk devices states, response all state info separatly
+                writeData("R*#"); // get api versions
                 break;
             }
             case 'S':
@@ -323,7 +322,22 @@ void MainWindow::deviceAdded(ChorusDevice *device){
     qDebug() << "deviceAdded";
     connect(device, &ChorusDevice::rssiChanged, ui->lcdNumber, QOverload<int>::of(&QLCDNumber::display));
     connect(device, &ChorusDevice::rssiChanged, ui->progressBar, &QProgressBar::setValue);
+    connect(device, &ChorusDevice::apiChanged, this, &MainWindow::deviceApiChanged);
 }
+
+void MainWindow::deviceApiChanged(int api){
+    ChorusDevice* device = qobject_cast<ChorusDevice*>(QObject::sender());
+
+    QString data;
+    if(api >= 4){
+        data = QString("R%1a").arg(device->id());
+    } else {
+        data = QString("R%1A").arg(device->id());
+    }
+    qDebug() << "deviceApiChanged" << api << device->id() << data;
+    writeData(data);
+}
+
 void MainWindow::writeInputData(){
     writeData(ui->serialInputLineEdit->text());
 }
