@@ -52,7 +52,6 @@ private slots:
 private:
     void fillSerialPortsComboBox();
     void fillSpeechForm();
-    void parseDeviceProperty(QString cmd, ChorusDevice* device);
     int parseHex(QString str);
 
     Ui::MainWindow *ui;

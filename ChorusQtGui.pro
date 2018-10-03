@@ -6,6 +6,8 @@
 
 QT       += core gui serialport texttospeech
 
+CONFIG += c++14
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ChorusQtGui
@@ -29,14 +31,24 @@ SOURCES += \
     src/chorusdevice.cpp \
     src/choruslaptimer.cpp \
     src/chorusdeviceform.cpp \
-    src/speechinfoholder.cpp
+    src/speechinfoholder.cpp \
+    src/responseparserv2.cpp \
+    src/responseparserfactory.cpp \
+    src/responseparser.cpp \
+    src/responseparserv4.cpp \
+    src/responseparserdefault.cpp
 
 HEADERS += \
         src/mainwindow.h \
     src/chorusdevice.h \
     src/choruslaptimer.h \
     src/chorusdeviceform.h \
-    src/speechinfoholder.h
+    src/speechinfoholder.h \
+    src/responseparser.h \
+    src/responseparserv2.h \
+    src/responseparserfactory.h \
+    src/responseparserv4.h \
+    src/responseparserdefault.h
 
 FORMS += \
         src/mainwindow.ui \
