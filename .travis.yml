@@ -4,16 +4,20 @@ dist: trusty
 addons:
   apt:
     sources:
-      - sourceline: 'ppa:beineri/opt-qt592-trusty'
+      - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
+      - ubuntu-toolchain-r-test
     packages:
-      - qt59base
-      - qt59speech
-      - qt59serialport
+      - gcc-5
+      - g++-5
+      - qt510base
+      - qt510speech
+      - qt510serialport
 
 before_script:
-  - QTDIR="/opt/qt59"
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 90
+  - QTDIR="/opt/qt510"
   - PATH="$QTDIR/bin:$PATH"
-  - source /opt/qt59/bin/qt59-env.sh
+  - source /opt/qt510/bin/qt510-env.sh
 
 script:
   - qmake ChorusQtGui.pro
